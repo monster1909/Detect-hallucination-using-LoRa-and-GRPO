@@ -69,7 +69,7 @@ class UnslothInferenceModel:
             num_labels=len(LABEL2ID)
         ).to(self.device) # Đã là 4-bit nên không cần .to(float16)
 
-        self.model.load_state_dict(checkpoint['model_state_dict'])
+        self.model.load_state_dict(checkpoint['model_state_dict'], strict=False)
         self.model.eval()
         logger.info("Model state dict loaded. Model is in eval mode.")
         
