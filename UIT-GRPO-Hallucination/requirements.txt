@@ -1,0 +1,10 @@
+torch
+scikit-learn
+transformers
+peft
+tqdm
+matplotlib
+seaborn
+pandas
+numpy
+huggingface_hub
