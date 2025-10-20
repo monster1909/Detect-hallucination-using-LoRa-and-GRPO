@@ -36,7 +36,7 @@ We combine a strong base model with **efficient fine-tuning** and **reinforcemen
 
 ### 2. Core Pipeline
 
-Our method operates in **three key stages**, implemented in the `ImprovedViHalluGRPO` model class:
+Our method operates in **three key stages**:
 
 #### **Step 1: Feature Extraction**
 - **Input Formatting**: The input is constructed as a structured prompt:
