@@ -69,3 +69,25 @@ def get_inference_args():
 
 
     return parser.parse_args()
+
+def get_interactive_args():
+    parser = argparse.ArgumentParser(description="Interactive Inference with ViHallu GRPO Model")
+
+    # Model & Checkpoint
+    parser.add_argument('--repo_id', type=str, default="TTTam/UIT_2025", help="Hugging Face Repo ID or local path to checkpoint")
+    parser.add_argument('--checkpoint_filename', type=str, default="best_model.pt", help="Filename of the checkpoint in the repo")
+    parser.add_argument('--max_len', type=int, default=1024 + 512, help="Max sequence length")
+
+    # LoRA Config (must match training)
+    parser.add_argument('--lora_r', type=int, default=8, help="LoRA r")
+    parser.add_argument('--lora_alpha', type=int, default=16, help="LoRA alpha")
+    parser.add_argument('--target_modules', nargs='+', default=["q_proj", "k_proj", "v_proj", "o_proj"], help="LoRA target modules")
+    
+    # System
+    parser.add_argument('--device', type=str, default="cuda" if torch.cuda.is_available() else "cpu", help="Device (cuda or cpu)")
+    
+    # Dummy args for SmartCollator (lấy từ CFG cũ)
+    parser.add_argument('--context_ratio', type=float, default=0.6, help="Ratio of context length (dummy for collator)")
+    parser.add_argument('--min_response_len', type=int, default=100, help="Min response length (dummy for collator)")
+
+    return parser.parse_args()

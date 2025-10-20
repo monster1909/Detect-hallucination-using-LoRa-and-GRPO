@@ -1,1 +1,0 @@
-pip install "unsloth[colab-new] @ git+https://github.com/unsloth/unsloth.git"

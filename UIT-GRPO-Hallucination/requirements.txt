@@ -8,3 +8,4 @@ seaborn
 pandas
 numpy
 huggingface_hub
+pip install "unsloth[colab-new] @ git+https://github.com/unsloth/unsloth.git"
