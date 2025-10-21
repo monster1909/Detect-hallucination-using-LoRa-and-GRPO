@@ -48,10 +48,10 @@ class ImprovedViHalluGRPO(nn.Module):
         out = self.backbone(
             input_ids=input_ids,
             attention_mask=attention_mask,
-            output_hidden_states=True,
+            output_hidden_states=False,
             return_dict=True
         )
-        last = out.last_hidden_state[-1]
+        last = out.last_hidden_state
 
         weights = resp_mask / (resp_mask.sum(1, keepdim=True).clamp(min=1.0))
         weights = weights.unsqueeze(-1)
