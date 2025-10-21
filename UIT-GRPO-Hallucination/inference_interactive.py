@@ -1,9 +1,9 @@
-# inference_interactive.py
+# inference_interactive_unsloth.py
 import logging
 import os
 import torch
-from src.config import get_interactive_args # <-- Sử dụng arg parser mới
-from src.predictor import InferenceModel
+from src.config import get_interactive_args 
+from src.predictor_unsloth import UnslothInferenceModel 
 from src.logging_utils import setup_logger
 
 # Tắt bớt log của transformers khi không cần thiết
@@ -35,22 +35,28 @@ def get_multiline_input(prompt_message):
 
 def main(args):
     # Chỉ log lỗi ra file, giữ console sạch cho tương tác
-    logger = setup_logger(log_file='inference_interactive.log')
+    logger = setup_logger(log_file='inference_interactive_unsloth.log')
     # Tắt console handler để không làm bẩn REPL
     for handler in logger.handlers:
         if isinstance(handler, logging.StreamHandler):
             handler.setLevel(logging.ERROR)
             
-    logger.info("Logger initialized for interactive mode...")
+    logger.info("Logger initialized for Unsloth interactive mode...")
     logger.info(f"Inference arguments: {args}")
 
-    # Tùy chọn thiết bị
-    if args.device == "cuda" and not torch.cuda.is_available():
-        print("Không tìm thấy CUDA. Chuyển sang CPU.")
-        logger.warning("CUDA not available. Forcing device to 'cpu'.")
-        args.device = "cpu"
-    else:
-        print(f"Đang sử dụng thiết bị: {args.device.upper()}")
+    # --- KIỂM TRA QUAN TRỌNG CHO UNSLOTH ---
+    if not torch.cuda.is_available():
+        print("\n" + "="*50)
+        print("LỖI: Unsloth yêu cầu phải có GPU (CUDA).")
+        print("Vui lòng chạy lại trên máy có GPU hoặc dùng file 'inference_interactive.py --device cpu'.")
+        print("="*50)
+        logger.error("Unsloth inference failed: CUDA not available.")
+        return
+    
+    # Unsloth luôn chạy trên cuda
+    args.device = "cuda"
+    print(f"Đang sử dụng thiết bị: {args.device.upper()} (Unsloth)")
+    # -------------------------------------
 
     # Lấy lora config
     lora_config = {
@@ -59,25 +65,25 @@ def main(args):
         "target_modules": args.target_modules,
     }
 
-    print("Đang tải mô hình... (việc này có thể mất vài phút)")
-    logger.info("Loading inference model...")
+    print("Đang tải mô hình Unsloth... (việc này có thể mất vài phút)")
+    logger.info("Loading Unsloth inference model...")
     try:
-        # Sử dụng predictor gốc
-        inference_model = InferenceModel(
+        # --- THAY ĐỔI: Sử dụng UnslothInferenceModel ---
+        inference_model = UnslothInferenceModel(
             repo_id_or_path=args.repo_id,
             checkpoint_filename=args.checkpoint_filename,
             lora_config=lora_config,
             args=args 
         )
-        print("✅ Mô hình đã tải xong. Sẵn sàng nhận input.")
+        print("✅ Mô hình Unsloth đã tải xong. Sẵn sàng nhận input.")
         logger.info("Model loaded successfully.")
     except Exception as e:
-        print(f"LỖI: Không thể tải mô hình. Vui lòng kiểm tra log: 'inference_interactive.log'")
+        print(f"LỖI: Không thể tải mô hình. Vui lòng kiểm tra log: 'inference_interactive_unsloth.log'")
         logger.error(f"Failed to load model: {e}", exc_info=True)
         return
 
     # Vòng lặp tương tác (REPL)
-    print("\n--- Chế độ Phân loại Tương tác ---")
+    print("\n--- Chế độ Phân loại Tương tác (UNSLOTH) ---")
     print("Gõ 'exit' (hoặc 'EOF' khi được yêu cầu nhập) để thoát.")
     
     while True:
@@ -99,7 +105,7 @@ def main(args):
                 break
 
             # Chạy dự đoán
-            print("\nĐang phân loại...")
+            print("\nĐang phân loại (Unsloth)...")
             result = inference_model.predict(
                 context=context,
                 prompt=prompt,
